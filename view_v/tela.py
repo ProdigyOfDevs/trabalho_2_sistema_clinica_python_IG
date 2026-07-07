@@ -30,127 +30,274 @@ class TelaApp:
                 return int(event)
     
     def entrando_clinica(self) -> int:
+
         layout = [
-        [sg.Text("1) Cadastrar nova clínica")],
-        [sg.Text("2) Listar clínicas cadastradas")],
-        [sg.Text("3) Alterar clínica cadastrada")],
-        [sg.Text("4) Remover clínica cadastrada")],
-        [sg.Text("5) Retornar ao menu anterior")],
-        [sg.Text('Opção:'),sg.InputText("")],
-        [sg.Submit()]
+            [sg.Text("MENU DE CLÍNICAS",
+                    font=("Arial",18,"bold"),
+                    justification="center",
+                    expand_x=True)],
+
+            [sg.HorizontalSeparator()],
+
+            [sg.Button("Cadastrar nova clínica",
+                    key="1",
+                    size=(35,2))],
+
+            [sg.Button("Listar clínicas cadastradas",
+                    key="2",
+                    size=(35,2))],
+
+            [sg.Button("Alterar clínica cadastrada",
+                    key="3",
+                    size=(35,2))],
+
+            [sg.Button("Remover clínica cadastrada",
+                    key="4",
+                    size=(35,2))],
+
+            [sg.HorizontalSeparator()],
+
+            [sg.Button("Voltar",
+                    key="5",
+                    button_color=("white","firebrick"),
+                    size=(15,1))]
         ]
 
-        window = sg.Window("MENU DE CLÍNICAS").Layout(layout)
+        window = sg.Window(
+            "Menu de Clínicas",
+            layout,
+            element_justification="center",
+            finalize=True
+        )
 
-        button, values = window.Read()
+        while True:
 
-        if button=='Submit':
-            entrada=values[0]
-            try:
-                opcao = int(entrada)
+            event, values = window.read()
 
+            if event in (sg.WINDOW_CLOSED, "5"):
                 window.close()
-                return opcao
-            except ValueError:
-                return -1
+                return 5
+
+            if event in ("1","2","3","4"):
+                window.close()
+                return int(event)
     
     def entrando_paciente(self) -> int:
         layout = [
-        [sg.Text("1) Cadastrar novo paciente")],
-        [sg.Text("2) Listar pacientes cadastrados")],
-        [sg.Text("3) Alterar paciente cadastrado")],
-        [sg.Text("4) Remover paciente cadastrado")],
-        [sg.Text("5) Retornar ao menu anterior")],
-        [sg.Text('Opção:'),sg.InputText("")],
-        [sg.Submit()]
+        [sg.Text("MENU DE PACIENTES",
+                 font=("Arial",18,"bold"),
+                 justification="center",
+                 expand_x=True)],
+
+        [sg.HorizontalSeparator()],
+
+        [sg.Button("Cadastrar novo paciente",
+                   key="1",
+                   size=(35,2))],
+
+        [sg.Button("Listar pacientes cadastrados",
+                   key="2",
+                   size=(35,2))],
+
+        [sg.Button("Alterar paciente cadastrado",
+                   key="3",
+                   size=(35,2))],
+
+        [sg.Button("Remover paciente cadastrado",
+                   key="4",
+                   size=(35,2))],
+
+        [sg.HorizontalSeparator()],
+
+        [sg.Button("Voltar",
+                   key="5",
+                   button_color=("white","firebrick"),
+                   size=(15,1))]
         ]
 
-        window = sg.Window("MENU DE PACIENTES").Layout(layout)
+        window = sg.Window(
+            "Menu de Pacientes",
+            layout,
+            element_justification="center",
+            finalize=True
+        )
 
-        button, values = window.Read()
+        while True:
 
-        if button=='Submit':
-            entrada=values[0]
-            try:
-                opcao = int(entrada)
+            event, values = window.read()
+
+            if event in (sg.WINDOW_CLOSED, "5"):
                 window.close()
-                return opcao
-            except ValueError:
-                return -1
+                return 5
+
+            if event in ("1","2","3","4"):
+                window.close()
+                return int(event)
     
     def entrando_profissional(self) -> int:
+
         layout = [
-        [sg.Text("1) Cadastrar novo profissional")],
-        [sg.Text("2) Listar profissionais cadastrados")],
-        [sg.Text("3) Alterar profissional cadastrado")],
-        [sg.Text("4) Remover profissional cadastrado")],
-        [sg.Text("5) Retornar ao menu anterior")],
-        [sg.Text('Opção:'),sg.InputText("")],
-        [sg.Submit()]
+            [sg.Text("MENU DE PROFISSIONAIS",
+                    font=("Arial",18,"bold"),
+                    justification="center",
+                    expand_x=True)],
+
+            [sg.HorizontalSeparator()],
+
+            [sg.Button("Cadastrar novo profissional",
+                    key="1",
+                    size=(35,2))],
+
+            [sg.Button("Listar profissionais cadastrados",
+                    key="2",
+                    size=(35,2))],
+
+            [sg.Button("Alterar profissional cadastrado",
+                    key="3",
+                    size=(35,2))],
+
+            [sg.Button("Remover profissional cadastrado",
+                    key="4",
+                    size=(35,2))],
+
+            [sg.HorizontalSeparator()],
+
+            [sg.Button("Voltar",
+                    key="5",
+                    button_color=("white","firebrick"),
+                    size=(15,1))]
         ]
 
-        window = sg.Window("MENU DE PROFISSIONAIS").Layout(layout)
+        window = sg.Window(
+            "Menu de Profissionais",
+            layout,
+            element_justification="center",
+            finalize=True
+        )
 
-        button, values = window.Read()
+        while True:
 
-        if button=='Submit':
-            entrada=values[0]
-            try:
-                opcao = int(entrada)
+            event, values = window.read()
+
+            if event in (sg.WINDOW_CLOSED, "5"):
                 window.close()
-                return opcao
-            except ValueError:
-                return -1
+                return 5
+
+            if event in ("1","2","3","4"):
+                window.close()
+                return int(event)
     
     def entrando_tipo_atendimento(self) -> int:
         layout = [
-        [sg.Text("1) Cadastrar novo tipo de atendimento")],
-        [sg.Text("2) Listar tipos de atendimento")],
-        [sg.Text("3) Alterar tipo de atendimento")],
-        [sg.Text("4) Remover tipo de atendimento")],
-        [sg.Text("5) Retornar ao menu anterior")],
-        [sg.Text('Opção:'),sg.InputText("")],
-        [sg.Submit()]
+        [sg.Text("MENU DE TIPOS DE ATENDIMENTO",
+                 font=("Arial",18,"bold"),
+                 justification="center",
+                 expand_x=True)],
+
+        [sg.HorizontalSeparator()],
+
+        [sg.Button("Cadastrar novo tipo de atendimento",
+                   key="1",
+                   size=(35,2))],
+
+        [sg.Button("Listar tipos de atendimento",
+                   key="2",
+                   size=(35,2))],
+
+        [sg.Button("Alterar tipo de atendimento",
+                   key="3",
+                   size=(35,2))],
+
+        [sg.Button("Remover tipo de atendimento",
+                   key="4",
+                   size=(35,2))],
+
+        [sg.HorizontalSeparator()],
+
+        [sg.Button("Voltar",
+                   key="5",
+                   button_color=("white","firebrick"),
+                   size=(15,1))]
         ]
 
-        window = sg.Window("MENU DE TIPOS DE ATENDIMENTO").Layout(layout)
+        window = sg.Window(
+            "Menu de Tipos de Atendimento",
+            layout,
+            element_justification="center",
+            finalize=True
+        )
 
-        button, values = window.Read()
+        while True:
 
-        if button=='Submit':
-            entrada=values[0]
-            try:
-                opcao = int(entrada)
+            event, values = window.read()
+
+            if event in (sg.WINDOW_CLOSED, "5"):
                 window.close()
-                return opcao
-            except ValueError:
-                return -1
+                return 5
+
+            if event in ("1","2","3","4"):
+                window.close()
+                return int(event)
     
     def entrando_atendimento(self) -> int:
         layout = [
-        [sg.Text("1) Agendar novo atendimento")],
-        [sg.Text("2) Listar atendimentos agendados")],
-        [sg.Text("3) Adicionar procedimento a um atendimento")],
-        [sg.Text("4) Registrar pagamento de um atendimento")],
-        [sg.Text("5) Cancelar/Excluir um atendimento")],
-        [sg.Text("6) Emitir relatórios consolidados")],
-        [sg.Text("7) Retornar ao menu anterior")],
-        [sg.Text('Opção:'),sg.InputText("")],
-        [sg.Submit()]
+        [sg.Text("MENU DE ATENDIMENTOS",
+                 font=("Arial",18,"bold"),
+                 justification="center",
+                 expand_x=True)],
+
+        [sg.HorizontalSeparator()],
+
+        [sg.Button("Agendar novo atendimento",
+                   key="1",
+                   size=(35,2))],
+
+        [sg.Button("Listar atendimentos agendados",
+                   key="2",
+                   size=(35,2))],
+
+        [sg.Button("Adicionar procedimento",
+                   key="3",
+                   size=(35,2))],
+
+        [sg.Button("Registrar pagamento",
+                   key="4",
+                   size=(35,2))],
+
+        [sg.Button("Cancelar/Excluir atendimento",
+                   key="5",
+                   size=(35,2))],
+
+        [sg.Button("Emitir relatórios consolidados",
+                   key="6",
+                   size=(35,2))],
+
+        [sg.HorizontalSeparator()],
+
+        [sg.Button("Voltar",
+                   key="7",
+                   button_color=("white","firebrick"),
+                   size=(15,1))]
         ]
 
-        window = sg.Window("MENU DE ATENDIMENTOS").Layout(layout)
+        window = sg.Window(
+            "Menu de Atendimentos",
+            layout,
+            element_justification="center",
+            finalize=True
+        )
 
-        button, values = window.Read()
+        while True:
 
-        if button=='Submit':
-            entrada=values[0]
-            try:
-                opcao = int(entrada)
+            event, values = window.read()
+
+            if event in (sg.WINDOW_CLOSED, "7"):
                 window.close()
-                return opcao
-            except ValueError:
-                return -1
+                return 7
+
+            if event in ("1","2","3","4","5","6"):
+                window.close()
+                return int(event)
     
     def mostra_mensagem(self, mensagem: str):
         sg.Popup("Aviso", mensagem)
