@@ -371,7 +371,6 @@ class ControladorAtendimento:
         return self.__atendimentos
 
     def incluir_atendimento(self):
-        # Validação inicial: precisamos ter clínicas, pacientes, profissionais e tipos de atendimento cadastrados
         if not self.__controlador_principal.controlador_clinica.clinicas:
             self.__controlador_principal.tela.mostra_mensagem("Erro: Não há clínicas cadastradas.")
             return
@@ -385,7 +384,6 @@ class ControladorAtendimento:
             self.__controlador_principal.tela.mostra_mensagem("Erro: Não há tipos de atendimento cadastrados.")
             return
 
-        # Selecionar Clínica
         self.__controlador_principal.controlador_clinica.listar_clinicas()
         nome_clinica = self.__controlador_principal.tela.selecionar_clinica()
         clinica = self.__controlador_principal.controlador_clinica.busca_clinica_por_nome(nome_clinica)
@@ -393,7 +391,6 @@ class ControladorAtendimento:
             self.__controlador_principal.tela.mostra_mensagem("Erro: Clínica não encontrada.")
             return
 
-        # Selecionar Paciente
         self.__controlador_principal.controlador_paciente.listar_pacientes()
         cpf_paciente = self.__controlador_principal.tela.selecionar_paciente()
         paciente = self.__controlador_principal.controlador_paciente.busca_paciente_por_cpf(cpf_paciente)
@@ -401,7 +398,6 @@ class ControladorAtendimento:
             self.__controlador_principal.tela.mostra_mensagem("Erro: Paciente não encontrado.")
             return
 
-        # Selecionar Profissional
         self.__controlador_principal.controlador_profissional.listar_profissionais()
         cpf_prof = self.__controlador_principal.tela.selecionar_profissional()
         profissional = self.__controlador_principal.controlador_profissional.busca_profissional_por_cpf(cpf_prof)
@@ -409,7 +405,6 @@ class ControladorAtendimento:
             self.__controlador_principal.tela.mostra_mensagem("Erro: Profissional não encontrado.")
             return
 
-        # Selecionar Tipo de Atendimento
         self.__controlador_principal.controlador_tipo_atendimento.listar_tipos_atendimento()
         desc_tipo = self.__controlador_principal.tela.selecionar_tipo_atendimento()
         tipo = self.__controlador_principal.controlador_tipo_atendimento.busca_tipo_por_descricao(desc_tipo)
@@ -417,21 +412,18 @@ class ControladorAtendimento:
             self.__controlador_principal.tela.mostra_mensagem("Erro: Tipo de atendimento não encontrado.")
             return
 
-        # Pegar dados de agendamento (data, horários, valor)
         dados = self.__controlador_principal.tela.pegar_dados_atendimento()
         if dados:
             data_atendimento = date(dados["ano"], dados["mes"], dados["dia"])
             horario_inicio = time(dados["hora_inicio"], dados["minuto_inicio"])
             horario_fim = time(dados["hora_fim"], dados["minuto_fim"])
 
-            # Validar se o paciente tem 18 anos completos na data do agendamento
             nascimento = paciente.nascimento
             idade = data_atendimento.year - nascimento.year - ((data_atendimento.month, data_atendimento.day) < (nascimento.month, nascimento.day))
             if idade < 18:
                 self.__controlador_principal.tela.mostra_mensagem("Erro: Pacientes menores de 18 anos não podem agendar atendimentos de forma independente.")
                 return
 
-            # Validar se o atendimento ocorre dentro do período de funcionamento da clínica
             if not (horario_inicio >= clinica.horario_inicial and horario_fim <= clinica.horario_fim):
                 self.__controlador_principal.tela.mostra_mensagem(f"Erro: O atendimento deve ocorrer dentro do funcionamento da clínica ({clinica.horario_inicial.strftime('%H:%M')} às {clinica.horario_fim.strftime('%H:%M')}).")
                 return

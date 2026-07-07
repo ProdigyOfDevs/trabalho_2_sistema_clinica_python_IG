@@ -323,7 +323,7 @@ class TelaApp:
             titulo = "Cadastro de Novo Profissional"
 
         layout = [
-            [sg.Text("Nome do Paciente:", size=(25,1)),
+            [sg.Text("Nome do Profissional:", size=(25,1)),
             sg.Input(key="nome")],
             [sg.Text("Celular:", size=(25,1)),
             sg.Input(key="celular")],
@@ -331,7 +331,7 @@ class TelaApp:
             sg.Input(key="cpf")],
             [sg.Text("Especialidade:", size=(25,1)),
             sg.Input(key="especialidade")],
-            [sg.Text("Registro Profissional (ex: CRM, CREFITO):", size=(25,1)),
+            [sg.Text("Registro Profissional (ex: CRM, CREFITO):", size=(30,1)),
             sg.Input(key="registro_profissional")],
             [sg.Button("Salvar"), sg.Button("Cancelar")]
         ]
@@ -390,11 +390,10 @@ class TelaApp:
         else:
             titulo = "Cadastro de Novo Tipo de Atendimento"
 
-        layout = [[sg.Text("Descrição (ex: Consulta, Exame, Retorno):", size=(25,1)),
-            sg.Input(key="descricao")],
-            [sg.Text("Valor Base (R$):", size=(25,1)),
-            sg.Input(key="valor_base")]]
-
+        layout = [[sg.Text("Descrição (ex: Consulta, Exame, Retorno):", size=(35,1)),sg.Input(key="descricao")],
+            [sg.Text("Valor Base (R$):", size=(25,1)), sg.Input(key="valor_base")],
+            [sg.Button("Salvar"), sg.Button("Cancelar")]]
+        
         window = sg.Window(titulo, layout)
 
         while True:
@@ -405,7 +404,7 @@ class TelaApp:
             if event == "Salvar":
                 try:
                     descricao = values["descricao"].strip()
-                    valor_base = values["valor_base"].strip()
+                    valor_base = int(values["valor_base"])
                     if not descricao:
                         raise ValueError("A descrição não pode ser vazia.")
                     if valor_base < 0:
@@ -571,13 +570,13 @@ class TelaApp:
             
         layout = [[sg.Table(values=dados,headings=["Nome","Cidade","Descrição","Funcionamento"],
                 auto_size_columns=True,justification="center",expand_x=True,expand_y=True)],
-                [sg.Button("Fechar")]]
+                [sg.Button("Prosseguir")]]
 
         window = sg.Window("Clínicas", layout)
 
         while True:
             event, _ = window.read()
-            if event in (sg.WINDOW_CLOSED, "Fechar"):
+            if event in (sg.WINDOW_CLOSED, "Prosseguir"):
                 break
         window.close()
     
@@ -591,13 +590,13 @@ class TelaApp:
         layout = [[sg.Table(values=dados,headings=["Nome", "CPF", "Celular", "Nascimento"],
                     auto_size_columns=True,justification="center",expand_x=True,expand_y=True,
                     num_rows=min(len(dados), 15),key="-TABLE-")],
-                    [sg.Button("Fechar")]]
+                    [sg.Button("Prosseguir")]]
 
         window = sg.Window("Pacientes", layout, resizable=True)
 
         while True:
             event, values = window.read()
-            if event in (sg.WINDOW_CLOSED, "Fechar"):
+            if event in (sg.WINDOW_CLOSED, "Prosseguir"):
                 break
         window.close()
     
@@ -610,13 +609,13 @@ class TelaApp:
         layout = [[sg.Table(values=dados,headings=["Nome","CPF","Celular","Especialidade","Registro"],
                     auto_size_columns=True,justification="center",expand_x=True,expand_y=True,
                     num_rows=min(len(dados), 15),key="-TABLE-")],
-                    [sg.Button("Fechar")]]
+                    [sg.Button("Prosseguir")]]
 
         window = sg.Window("Profissionais", layout, resizable=True)
 
         while True:
             event, values = window.read()
-            if event in (sg.WINDOW_CLOSED, "Fechar"):
+            if event in (sg.WINDOW_CLOSED, "Prosseguir"):
                 break
         window.close()
     
@@ -630,13 +629,13 @@ class TelaApp:
                     auto_size_columns=True,justification="center",
                     expand_x=True,expand_y=True,num_rows=min(len(dados), 15),
                     key="-TABLE-")],
-                [sg.Button("Fechar")]]
+                [sg.Button("Prosseguir")]]
 
         window = sg.Window("Tipos de Atendimento", layout, resizable=True)
 
         while True:
             event, values = window.read()
-            if event in (sg.WINDOW_CLOSED, "Fechar"):
+            if event in (sg.WINDOW_CLOSED, "Prosseguir"):
                 break
         window.close()
     
@@ -652,13 +651,13 @@ class TelaApp:
         layout = [[sg.Table(values=dados,headings=["ID","Data","Horário","Clínica","Paciente","Valor Restante"],
                     auto_size_columns=True,justification="center",expand_x=True,expand_y=True,
                     num_rows=min(len(dados), 15),key="-TABLE-")],
-                [sg.Button("Fechar")]]
+                [sg.Button("Prosseguir")]]
 
         window = sg.Window("Atendimentos", layout, resizable=True)
 
         while True:
             event, values = window.read()
-            if event in (sg.WINDOW_CLOSED, "Fechar"):
+            if event in (sg.WINDOW_CLOSED, "Prosseguir"):
                 break
         window.close()
     
@@ -711,17 +710,17 @@ class TelaApp:
                         auto_size_columns=True)],
             [sg.Text("Procedimentos mais realizados",font=("Arial",11,"bold"))],
             [sg.Table(values=dados_procedimentos,headings=["Procedimento","Quantidade"],
-                        auto_size_columns=True,justification="center",num_rows=min(len(dados_procedimentos),6))],
+                        auto_size_columns=True,justification="center",num_rows=min(len(dados_procedimentos),10))],
             [sg.Text("Procedimentos extremos",font=("Arial",11,"bold"))],
             [sg.Table(values=procedimentos_extremos,headings=["Tipo","Procedimento","Custo","Responsável"],
                         auto_size_columns=True)],
-            [sg.Button("Fechar")]]
+            [sg.Button("Prosseguir")]]
 
         window = sg.Window("Relatórios",layout,resizable=True)
 
         while True:
             event, values = window.read()
-            if event in (sg.WINDOW_CLOSED,"Fechar"):
+            if event in (sg.WINDOW_CLOSED,"Prosseguir"):
                 break
         window.close()
 
