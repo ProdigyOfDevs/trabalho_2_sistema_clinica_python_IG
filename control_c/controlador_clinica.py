@@ -1,18 +1,21 @@
 from datetime import time
 from model_m.clinica import Clinica
+from daos.dao_clinica import ClinicaDAO
 
 
 class ControladorClinica:
     def __init__(self, controlador_principal):
         self.__controlador_principal = controlador_principal
-        self.__clinicas = []
+        #self.__clinicas = []
+        self.__clinicas_dao = ClinicaDAO()
 
     @property
     def clinicas(self):
         return self.__clinicas
 
     def busca_clinica_por_nome(self, nome: str):
-        for clinica in self.__clinicas:
+        #for clinica in self.__clinicas:
+        for clinica in self.__clinicas_dao.get_all():
             if clinica.nome.lower() == nome.lower().strip():
                 return clinica
         return None
@@ -33,18 +36,25 @@ class ControladorClinica:
                 dados["hora_fechamento"],
                 dados["minuto_fechamento"]
             )
-            self.__clinicas.append(nova_clinica)
+            #self.__clinicas.append(nova_clinica)
+            self.__clinicas_dao.add(nova_clinica)
             self.__controlador_principal.tela_clinica.mostra_mensagem("Clínica cadastrada com sucesso!")
 
     def listar_clinicas(self):
-        if not self.__clinicas:
-            self.__controlador_principal.tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada.")
+        clinicas = list(self.__clinicas_dao.get_all())
+
+        if len(clinicas) == 0:
+            self.__controlador_principal.tela_clinica.mostra_mensagem(
+                "Nenhuma clínica cadastrada."
+            )
             return
-        
-        self.__controlador_principal.tela_clinica.mostrar_clinicas(self.__clinicas)
+
+        self.__controlador_principal.tela_clinica.mostrar_clinicas(clinicas)
 
     def alterar_clinica(self):
-        if not self.__clinicas:
+        clinicas = list(self.__clinicas_dao.get_all())
+
+        if len(clinicas) == 0:
             self.__controlador_principal.tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada para alterar.")
             return
 
@@ -54,19 +64,27 @@ class ControladorClinica:
         if clinica:
             novos_dados = self.__controlador_principal.tela_clinica.pegar_dados_clinica(alteracao=True)
             if novos_dados:
+                nome_antigo = clinica.nome
                 clinica.nome = novos_dados["nome"]
                 clinica.cidade = novos_dados["cidade"]
                 clinica.descricao = novos_dados["descricao"]
-                
+
                 clinica.horario_inicial = time(novos_dados["hora_abertura"], novos_dados["minuto_abertura"])
                 clinica.horario_fim = time(novos_dados["hora_fechamento"], novos_dados["minuto_fechamento"])
-                
-                self.__controlador_principal.tela_clinica.mostra_mensagem("Clínica alterada com sucesso!")
+
+                self.__clinicas_dao.remove(nome_antigo)
+                self.__clinicas_dao.add(clinica)
+
+                self.__controlador_principal.tela_clinica.mostra_mensagem(
+                    "Clínica alterada com sucesso!"
+                )
         else:
             self.__controlador_principal.tela_clinica.mostra_mensagem("Clínica não encontrada.")
 
     def excluir_clinica(self):
-        if not self.__clinicas:
+        clinicas = list(self.__clinicas_dao.get_all())
+
+        if len(clinicas) == 0:
             self.__controlador_principal.tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada para excluir.")
             return
 
@@ -74,7 +92,8 @@ class ControladorClinica:
         clinica = self.busca_clinica_por_nome(nome_busca)
 
         if clinica:
-            self.__clinicas.remove(clinica)
+            #self.__clinicas.remove(clinica)
+            self.__clinicas_dao.remove(clinica.nome)
             self.__controlador_principal.tela_clinica.mostra_mensagem("Clínica excluída com sucesso!")
         else:
             self.__controlador_principal.tela_clinica.mostra_mensagem("Clínica não encontrada.")
