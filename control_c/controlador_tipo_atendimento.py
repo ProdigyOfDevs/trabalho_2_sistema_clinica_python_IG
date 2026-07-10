@@ -1,16 +1,17 @@
 from model_m.tipoAtendimento import TipoAtendimento
+from daos.dao_tipo_atendimento import TipoAtendimentoDAO
 
 class ControladorTipoAtendimento:
     def __init__(self, controlador_principal):
         self.__controlador_principal = controlador_principal
-        self.__tipos_atendimento = []
+        self.__tipos_atendimento_dao = TipoAtendimentoDAO()
 
     @property
     def tipos_atendimento(self):
-        return self.__tipos_atendimento
+        return list(self.__tipos_atendimento_dao.get_all())
 
     def busca_tipo_por_descricao(self, descricao: str):
-        for tipo in self.__tipos_atendimento:
+        for tipo in self.__tipos_atendimento_dao.get_all():
             if tipo.descricao.lower() == descricao.lower().strip():
                 return tipo
         return None
@@ -26,18 +27,20 @@ class ControladorTipoAtendimento:
                 dados["descricao"],
                 dados["valor_base"]
             )
-            self.__tipos_atendimento.append(novo_tipo)
+            self.__tipos_atendimento_dao.add(novo_tipo)
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento cadastrado com sucesso!")
 
     def listar_tipos_atendimento(self):
-        if not self.__tipos_atendimento:
+        tipos = list(self.__tipos_atendimento_dao.get_all())
+        if not tipos:
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Nenhum tipo de atendimento cadastrado.")
             return
         
-        self.__controlador_principal.tela_tipo_atendimento.mostrar_tipos_atendimento(self.__tipos_atendimento)
+        self.__controlador_principal.tela_tipo_atendimento.mostrar_tipos_atendimento(tipos)
 
     def alterar_tipo_atendimento(self):
-        if not self.__tipos_atendimento:
+        tipos = list(self.__tipos_atendimento_dao.get_all())
+        if not tipos:
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Nenhum tipo de atendimento cadastrado para alterar.")
             return
 
@@ -47,14 +50,20 @@ class ControladorTipoAtendimento:
         if tipo:
             novos_dados = self.__controlador_principal.tela_tipo_atendimento.pegar_dados_tipo_atendimento(alteracao=True)
             if novos_dados:
+                desc_antiga = tipo.descricao
                 tipo.descricao = novos_dados["descricao"]
                 tipo.valor_base = novos_dados["valor_base"]
+                
+                self.__tipos_atendimento_dao.remove(desc_antiga)
+                self.__tipos_atendimento_dao.add(tipo)
+                
                 self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento alterado com sucesso!")
         else:
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento não encontrado.")
 
     def excluir_tipo_atendimento(self):
-        if not self.__tipos_atendimento:
+        tipos = list(self.__tipos_atendimento_dao.get_all())
+        if not tipos:
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Nenhum tipo de atendimento cadastrado para excluir.")
             return
 
@@ -62,7 +71,7 @@ class ControladorTipoAtendimento:
         tipo = self.busca_tipo_por_descricao(descricao_busca)
 
         if tipo:
-            self.__tipos_atendimento.remove(tipo)
+            self.__tipos_atendimento_dao.remove(tipo.descricao)
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento excluído com sucesso!")
         else:
             self.__controlador_principal.tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento não encontrado.")

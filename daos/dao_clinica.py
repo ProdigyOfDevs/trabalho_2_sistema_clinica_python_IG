@@ -21,10 +21,10 @@ class ClinicaDAO(DAO):
         ):
             super().update(clinica.nome, clinica)
 
-    def get(self, key: int):
-        if isinstance(key, int):
+    def get(self, key: str):
+        if isinstance(key, str):
             return super().get(key)
 
-    def remove(self, key: int):
-        if isinstance(key, int):
+    def remove(self, key: str):
+        if isinstance(key, str):
             return super().remove(key)

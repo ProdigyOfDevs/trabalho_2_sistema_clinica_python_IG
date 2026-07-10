@@ -11,7 +11,7 @@ class ControladorClinica:
 
     @property
     def clinicas(self):
-        return self.__clinicas
+        return list(self.__clinicas_dao.get_all())
 
     def busca_clinica_por_nome(self, nome: str):
         #for clinica in self.__clinicas:

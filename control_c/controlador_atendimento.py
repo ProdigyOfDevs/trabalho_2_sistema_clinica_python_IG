@@ -1,15 +1,16 @@
 from model_m.atendimento import Atendimento
 from model_m.pagamento import PagamentoPix, PagamentoCartao, PagamentoDinheiro
+from daos.dao_atendimento import AtendimentoDAO
 from datetime import time, date
 
 class ControladorAtendimento:
     def __init__(self, controlador_principal):
         self.__controlador_principal = controlador_principal
-        self.__atendimentos = []
+        self.__atendimentos_dao = AtendimentoDAO()
 
     @property
     def atendimentos(self):
-        return self.__atendimentos
+        return list(self.__atendimentos_dao.get_all())
 
     def incluir_atendimento(self):
         if not self.__controlador_principal.controlador_clinica.clinicas:
@@ -42,7 +43,7 @@ class ControladorAtendimento:
         self.__controlador_principal.controlador_profissional.listar_profissionais()
         cpf_prof = self.__controlador_principal.tela_profissional.selecionar_profissional()
         profissional = self.__controlador_principal.controlador_profissional.busca_profissional_por_cpf(cpf_prof)
-        if not profissional:
+        if not profesional:
             self.__controlador_principal.tela_profissional.mostra_mensagem("Erro: Profissional não encontrado.")
             return
 
@@ -82,27 +83,29 @@ class ControladorAtendimento:
                 profissional,
                 tipo
             )
-            self.__atendimentos.append(novo_atendimento)
+            self.__atendimentos_dao.add(novo_atendimento)
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Atendimento agendado com sucesso!")
 
     def listar_atendimentos(self):
-        if not self.__atendimentos:
+        atendimentos = list(self.__atendimentos_dao.get_all())
+        if not atendimentos:
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Nenhum atendimento agendado.")
             return
-        self.__controlador_principal.tela_atendimento.mostrar_atendimentos(self.__atendimentos)
+        self.__controlador_principal.tela_atendimento.mostrar_atendimentos(atendimentos)
 
     def incluir_procedimento(self):
-        if not self.__atendimentos:
+        atendimentos = list(self.__atendimentos_dao.get_all())
+        if not atendimentos:
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Nenhum atendimento agendado.")
             return
 
         self.listar_atendimentos()
         index = self.__controlador_principal.tela_atendimento.selecionar_atendimento()
-        if not (0 <= index < len(self.__atendimentos)):
+        if not (0 <= index < len(atendimentos)):
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Erro: Seleção inválida.")
             return
 
-        atendimento = self.__atendimentos[index]
+        atendimento = atendimentos[index]
 
         self.__controlador_principal.controlador_profissional.listar_profissionais()
         cpf_prof = self.__controlador_principal.tela_profissional.selecionar_profissional()
@@ -114,20 +117,22 @@ class ControladorAtendimento:
         dados = self.__controlador_principal.tela_atendimento.pegar_dados_procedimento()
         if dados:
             atendimento.adicionar_procedimento(dados["descricao"], dados["custo"], profissional)
+            self.__atendimentos_dao.update(atendimento)
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Procedimento registrado no atendimento com sucesso!")
 
     def registrar_pagamento(self):
-        if not self.__atendimentos:
+        atendimentos = list(self.__atendimentos_dao.get_all())
+        if not atendimentos:
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Nenhum atendimento agendado.")
             return
 
         self.listar_atendimentos()
         index = self.__controlador_principal.tela_atendimento.selecionar_atendimento()
-        if not (0 <= index < len(self.__atendimentos)):
+        if not (0 <= index < len(atendimentos)):
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Erro: Seleção inválida.")
             return
 
-        atendimento = self.__atendimentos[index]
+        atendimento = atendimentos[index]
         
         valor_devedor = atendimento.valor_restante()
         if valor_devedor <= 0:
@@ -158,29 +163,34 @@ class ControladorAtendimento:
 
             if pagamento:
                 atendimento.adicionar_pagamento(pagamento)
+                self.__atendimentos_dao.update(atendimento)
                 self.__controlador_principal.tela_atendimento.mostra_mensagem("Pagamento registrado com sucesso!")
 
     def excluir_atendimento(self):
-        if not self.__atendimentos:
+        atendimentos = list(self.__atendimentos_dao.get_all())
+        if not atendimentos:
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Nenhum atendimento agendado para excluir.")
             return
 
         self.listar_atendimentos()
         index = self.__controlador_principal.tela_atendimento.selecionar_atendimento()
-        if not (0 <= index < len(self.__atendimentos)):
+        if not (0 <= index < len(atendimentos)):
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Erro: Seleção inválida.")
             return
 
-        self.__atendimentos.pop(index)
+        atendimento = atendimentos[index]
+        key = f"{atendimento.paciente.cpf}_{atendimento.data.strftime('%d%m%Y')}_{atendimento.horario_inicio.strftime('%H%M')}"
+        self.__atendimentos_dao.remove(key)
         self.__controlador_principal.tela_atendimento.mostra_mensagem("Atendimento cancelado com sucesso!")
 
     def emitir_relatorios(self):
-        if not self.__atendimentos:
+        atendimentos = list(self.__atendimentos_dao.get_all())
+        if not atendimentos:
             self.__controlador_principal.tela_atendimento.mostra_mensagem("Nenhum dado cadastrado para emitir relatórios.")
             return
 
         contagem_clinicas = {}
-        for atend in self.__atendimentos:
+        for atend in atendimentos:
             clinica = atend.clinica.nome
             contagem_clinicas[clinica] = contagem_clinicas.get(clinica, 0) + 1
         relatorio_clinicas = sorted(contagem_clinicas.items(), key=lambda item: item[1], reverse=True)
@@ -188,13 +198,13 @@ class ControladorAtendimento:
         def custo_total(atend):
             return atend.valor + atend.total_de_procedimentos() + atend.valor_de_atendimento()
         
-        atendimentos_ordenados = sorted(self.__atendimentos, key=custo_total)
+        atendimentos_ordenados = sorted(atendimentos, key=custo_total)
         atend_mais_barato = atendimentos_ordenados[0]
         atend_mais_caro = atendimentos_ordenados[-1]
 
         contagem_procedimentos = {}
         todos_procedimentos = []
-        for atend in self.__atendimentos:
+        for atend in atendimentos:
             for proc in atend.procedimentos:
                 todos_procedimentos.append(proc)
                 desc = proc.descricao.lower().strip()

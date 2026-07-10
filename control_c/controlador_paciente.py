@@ -1,17 +1,18 @@
 from datetime import date
 from model_m.paciente import Paciente
+from daos.dao_paciente import PacienteDAO
 
 class ControladorPaciente:
     def __init__(self, controlador_principal):
         self.__controlador_principal = controlador_principal
-        self.__pacientes = []
+        self.__pacientes_dao = PacienteDAO()
 
     @property
     def pacientes(self):
-        return self.__pacientes
+        return list(self.__pacientes_dao.get_all())
 
     def busca_paciente_por_cpf(self, cpf: str):
-        for paciente in self.__pacientes:
+        for paciente in self.__pacientes_dao.get_all():
             clean_cpf = lambda c: c.replace(".", "").replace("-", "")
             if clean_cpf(paciente.cpf) == clean_cpf(cpf):
                 return paciente
@@ -32,18 +33,20 @@ class ControladorPaciente:
                 dados["mes_nascimento"],
                 dados["dia_nascimento"]
             )
-            self.__pacientes.append(novo_paciente)
+            self.__pacientes_dao.add(novo_paciente)
             self.__controlador_principal.tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
 
     def listar_pacientes(self):
-        if not self.__pacientes:
+        pacientes = list(self.__pacientes_dao.get_all())
+        if not pacientes:
             self.__controlador_principal.tela_paciente.mostra_mensagem("Nenhum paciente cadastrado.")
             return
         
-        self.__controlador_principal.tela_paciente.mostrar_pacientes(self.__pacientes)
+        self.__controlador_principal.tela_paciente.mostrar_pacientes(pacientes)
 
     def alterar_paciente(self):
-        if not self.__pacientes:
+        pacientes = list(self.__pacientes_dao.get_all())
+        if not pacientes:
             self.__controlador_principal.tela_paciente.mostra_mensagem("Nenhum paciente cadastrado para alterar.")
             return
 
@@ -60,12 +63,14 @@ class ControladorPaciente:
                     novos_dados["mes_nascimento"],
                     novos_dados["dia_nascimento"]
                 )
+                self.__pacientes_dao.update(paciente)
                 self.__controlador_principal.tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
         else:
             self.__controlador_principal.tela_paciente.mostra_mensagem("Paciente não encontrado.")
 
     def excluir_paciente(self):
-        if not self.__pacientes:
+        pacientes = list(self.__pacientes_dao.get_all())
+        if not pacientes:
             self.__controlador_principal.tela_paciente.mostra_mensagem("Nenhum paciente cadastrado para excluir.")
             return
 
@@ -73,7 +78,7 @@ class ControladorPaciente:
         paciente = self.busca_paciente_por_cpf(cpf_busca)
 
         if paciente:
-            self.__pacientes.remove(paciente)
+            self.__pacientes_dao.remove(paciente.cpf)
             self.__controlador_principal.tela_paciente.mostra_mensagem("Paciente excluído com sucesso!")
         else:
             self.__controlador_principal.tela_paciente.mostra_mensagem("Paciente não encontrado.")
