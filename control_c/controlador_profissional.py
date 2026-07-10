@@ -11,10 +11,10 @@ class ControladorProfissional:
         return list(self.__profissionais_dao.get_all())
 
     def busca_profissional_por_cpf(self, cpf: str):
-        for profesional in self.__profissionais_dao.get_all():
+        for profissional in self.__profissionais_dao.get_all():
             clean_cpf = lambda c: c.replace(".", "").replace("-", "")
-            if clean_cpf(profesional.cpf) == clean_cpf(cpf):
-                return profesional
+            if clean_cpf(profissional.cpf) == clean_cpf(cpf):
+                return profissional
         return None
 
     def incluir_profissional(self):

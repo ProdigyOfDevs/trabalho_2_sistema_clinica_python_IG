@@ -43,7 +43,7 @@ class ControladorAtendimento:
         self.__controlador_principal.controlador_profissional.listar_profissionais()
         cpf_prof = self.__controlador_principal.tela_profissional.selecionar_profissional()
         profissional = self.__controlador_principal.controlador_profissional.busca_profissional_por_cpf(cpf_prof)
-        if not profesional:
+        if not profissional:
             self.__controlador_principal.tela_profissional.mostra_mensagem("Erro: Profissional não encontrado.")
             return
 
